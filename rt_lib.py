@@ -1,13 +1,11 @@
 import tensorflow as tf
-from keras_retinanet.utils.image import preprocess_image
-from keras_retinanet.utils.image import resize_image
-from keras_retinanet.utils.image import read_image_bgr
-from keras_retinanet.utils.visualization import draw_box, draw_caption
 import cv2 as cv
 import numpy as np
 
+# CONFIGURE HERE
 output_names = ['filtered_detections/map/TensorArrayStack/TensorArrayGatherV3', 'filtered_detections/map/TensorArrayStack_1/TensorArrayGatherV3', 'filtered_detections/map/TensorArrayStack_2/TensorArrayGatherV3']
 input_names = ['input_1']
+TRT_PATH = './model/trt_graph.pb'
 
 def get_frozen_graph(graph_file):
     """Read Frozen Graph file from disk."""
@@ -17,7 +15,7 @@ def get_frozen_graph(graph_file):
     return graph_def
 
 def load_trt(path):
-    path = './model/trt_graph.pb' # remove this after testing
+
     trt_graph = get_frozen_graph(path) 
 
     # Create session and load graph
@@ -50,16 +48,9 @@ def load_trt(path):
 
     return (input_tensor_name, output_tensor_0, output_tensor_1, output_tensor_2)
 
-def make_inference(img):
-    
-    image = read_image_bgr(img)
-    #draw = image.copy()
+def make_inference(image):
 
-    image = preprocess_image(image)
-    (image, scale) = resize_image(image)
-    image = np.expand_dims(image, axis=0)
-
-    graph = load_trt(trt_path)
+    graph = load_trt(TRT_PATH)
 
     feed_dict = {graph[0]: image}
     preds = tf_sess.run([graph[1], graph[2], graph[3]], feed_dict)
@@ -68,23 +59,4 @@ def make_inference(img):
     return boxes, scores, labels
 
 
-from imutils import paths
-from time import time
-dura = []
-
-img_path = '../retinanet/src'
-trt_path = None
-imagePaths = list(paths.list_files(img_path))
-
-id = {0:'gate', 1:"flare"}
-
-for i in imagePaths:
-    start_time = time()
-
-    boxes, scores, labels = make_inference(i)
-    elasp = time() - start_time
-    print(elasp)
-    dura.append(elasp)
-
-dura = np.array(dura)
-print("\nw/ tensorrt mean: {}".format(np.mean(dura)))
+    

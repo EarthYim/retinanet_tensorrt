@@ -30,7 +30,9 @@ for i in imagePaths:
     (image, scale) = resize_image(image)
     image = np.expand_dims(image, axis=0)
 
-    (boxes, scores, labels) = make_inference(image)
+    graph = load_trt()
+
+    (boxes, scores, labels) = make_inference(image, graph)
     
     #filtering and drawing
     for (box, score, label) in zip(boxes[0], scores[0], labels[0]):

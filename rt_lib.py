@@ -14,9 +14,9 @@ def get_frozen_graph(graph_file):
         graph_def.ParseFromString(f.read())
     return graph_def
 
-def load_trt(path):
+def load_trt():
 
-    trt_graph = get_frozen_graph(path) 
+    trt_graph = get_frozen_graph(TRT_PATH) 
 
     # Create session and load graph
     tf_config = tf.ConfigProto()
@@ -48,9 +48,9 @@ def load_trt(path):
 
     return (input_tensor_name, output_tensor_0, output_tensor_1, output_tensor_2, tf_sess)
 
-def make_inference(image):
+def make_inference(image, graph):
 
-    graph = load_trt(TRT_PATH)
+    #graph = load_trt(TRT_PATH)
     tf_sess = graph[4]
 
     feed_dict = {graph[0]: image}

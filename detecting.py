@@ -25,6 +25,7 @@ for i in imagePaths:
     start_time = time()
 
     image = read_image_bgr(i)
+    draw = image.copy()
     image = preprocess_image(image)
     (image, scale) = resize_image(image)
     image = np.expand_dims(image, axis=0)

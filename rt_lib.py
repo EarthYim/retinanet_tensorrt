@@ -46,11 +46,12 @@ def load_trt(path):
     output_tensor_1 = tf_sess.graph.get_tensor_by_name(output_tensor_name_1)
     output_tensor_2 = tf_sess.graph.get_tensor_by_name(output_tensor_name_2)
 
-    return (input_tensor_name, output_tensor_0, output_tensor_1, output_tensor_2)
+    return (input_tensor_name, output_tensor_0, output_tensor_1, output_tensor_2, tf_sess)
 
 def make_inference(image):
 
     graph = load_trt(TRT_PATH)
+    tf_sess = graph[4]
 
     feed_dict = {graph[0]: image}
     preds = tf_sess.run([graph[1], graph[2], graph[3]], feed_dict)
@@ -59,4 +60,3 @@ def make_inference(image):
     return boxes, scores, labels
 
 
-    

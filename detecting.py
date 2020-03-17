@@ -1,4 +1,4 @@
-from rt_lib import make_inference
+from rt_lib import make_inference, load_trt
 from retinanet_image import read_image_bgr, preprocess_image, resize_image, draw_box, draw_caption, draw_boxes
 import numpy as np
 import cv2 as cv
@@ -17,7 +17,7 @@ imagePaths = list(paths.list_files(args["input"]))
 id = {0:'gate', 1:'flare'}
 
 dura = []
-
+graph = load_trt()
 for i in imagePaths:
 
     fname = i.split(os.path.sep)[-1]
@@ -29,8 +29,6 @@ for i in imagePaths:
     image = preprocess_image(image)
     (image, scale) = resize_image(image)
     image = np.expand_dims(image, axis=0)
-
-    graph = load_trt()
 
     (boxes, scores, labels) = make_inference(image, graph)
     
@@ -54,7 +52,7 @@ for i in imagePaths:
     #cv.imwrite(args["output"]+'/'+fname, draw)
 
 dura = np.array(dura)
-print("\n mean: {}".format(np.mean(dura)))
+print("\nw/ tensorrt - mean: {}".format(np.mean(dura)))
 
 
         
